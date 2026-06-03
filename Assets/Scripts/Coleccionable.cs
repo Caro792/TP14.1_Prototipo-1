@@ -3,16 +3,14 @@ using TMPro;
 
 public class Coleccionable : MonoBehaviour
 {
-    
     public static int contadorObjetos = 0;
 
     private TextMeshProUGUI textoContador;
 
     void Start()
     {
-        
         textoContador = GameObject.FindObjectOfType<TextMeshProUGUI>();
-        
+
         if (textoContador != null && contadorObjetos == 0)
         {
             textoContador.text = "Objetos: 0";
@@ -24,17 +22,15 @@ public class Coleccionable : MonoBehaviour
         if (other.CompareTag("Player") || other.transform.root.CompareTag("Player"))
         {
             contadorObjetos++;
-            
-            
+
             Debug.Log("Objetos recolectados: " + contadorObjetos);
 
             
-            if (textoContador != null)
+            if (GameManager.instancia != null)
             {
-                textoContador.text = "Objetos: " + contadorObjetos;
+                GameManager.instancia.UpdateScore(contadorObjetos);
             }
 
-            
             Destroy(gameObject);
         }
     }
