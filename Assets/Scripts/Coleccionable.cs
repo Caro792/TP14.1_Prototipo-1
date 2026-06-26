@@ -1,36 +1,33 @@
 ﻿using UnityEngine;
 using TMPro;
 
-public class Coleccionable : MonoBehaviour
+public class Coleccionable : MonoBehaviour 
 {
     public static int contadorObjetos = 0;
-
     private TextMeshProUGUI textoContador;
 
-    void Start()
+    void Start() 
     {
         textoContador = GameObject.FindObjectOfType<TextMeshProUGUI>();
-
-        if (textoContador != null && contadorObjetos == 0)
+        if (textoContador != null && contadorObjetos == 0) 
         {
             textoContador.text = "Objetos: 0";
         }
     }
 
-    void OnTriggerEnter(Collider other)
+    void OnTriggerEnter(Collider other) 
     {
-        if (other.CompareTag("Player") || other.transform.root.CompareTag("Player"))
+        if (other.CompareTag("Player") || other.transform.root.CompareTag("Player")) 
         {
             contadorObjetos++;
-
             Debug.Log("Objetos recolectados: " + contadorObjetos);
 
-            
-            if (GameManager.instancia != null)
+            if (GameManager.instancia != null) 
             {
-                GameManager.instancia.UpdateScore(contadorObjetos);
+                // Envía el punto al GameManager
+                GameManager.instancia.UpdateScore(contadorObjetos); 
             }
-
+            
             Destroy(gameObject);
         }
     }
