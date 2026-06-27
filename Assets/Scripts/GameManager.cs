@@ -2,79 +2,71 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
-using UnityEngine.SceneManagement;
+using UnityEngine.SceneManagement; // Librería de escenas obligatoria
 
-public class GameManager : MonoBehaviour 
+public class GameManager : MonoBehaviour
 {
     public static GameManager instancia;
 
     [Header("Referencias de UI (TextMeshPro)")]
-    public TextMeshProUGUI textoContador;
-    public TextMeshProUGUI textoTemporizador;
-
+    public TextMeshProUGUI textoContador;     
+    public TextMeshProUGUI textoTemporizador; 
+    
     [Header("Referencias de Paneles de Fin de Juego")]
-    public UIManager uiManager; 
+    public UIManager uiManager; // Referencia al script que maneja la UI
 
     [Header("Variables del Juego")]
-    public float timer = 60f;
-    
-    // Forzamos a que el valor sea 7 directamente en el código para evitar fallos del Inspector
-    public int puntajeMaximo = 7; 
-    
-    private int contadorObjetos = 0;
-    private bool juegoTerminado = false; 
+    public float timer = 60f; 
+    private int contadorObjetos = 0; 
+    private bool juegoTerminado = false; // Control interno de estado
 
-    void Awake() 
+    void Awake()
     {
-        instancia = this; 
-        Time.timeScale = 1;
-        
-        // REINICIO FORZADO: Esto garantiza que el contador empiece en 0 siempre
-        contadorObjetos = 0;
-        Coleccionable.contadorObjetos = 0; 
+        instancia = this;
+        // Crucial: El juego no debe iniciar congelado tras reiniciar
+        Time.timeScale = 1; 
     }
 
-    void Update() 
+    void Update()
     {
-        if (juegoTerminado && Input.GetKeyDown(KeyCode.R)) 
+        // Sistema de Reinicio
+        if (juegoTerminado && Input.GetKeyDown(KeyCode.R))
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
 
+        // Si el juego ya terminó, no seguimos descontando tiempo
         if (juegoTerminado) return;
 
-        if (timer > 0) 
+        // Control de la cuenta regresiva
+        if (timer > 0)
         {
             timer -= Time.deltaTime;
+            
             if (timer <= 0) 
             {
                 timer = 0;
                 FinalizarPorDerrota();
             }
+
             UpdateTimerText();
         }
     }
 
-    public void UpdateScore(int scoreActualizado) 
+    public void UpdateScore(int scoreActualizado)
     {
-        contadorObjetos = scoreActualizado;
-        Debug.Log("Coleccionado: " + contadorObjetos + " de " + puntajeMaximo);
+        contadorObjetos = scoreActualizado; 
+        Debug.Log("Objetos recolectados: " + contadorObjetos);
 
-        if (textoContador != null) 
+        if (textoContador != null)
         {
             textoContador.text = "Score: " + contadorObjetos;
         }
-
-        // Comprobación estricta de victoria
-        if (contadorObjetos >= puntajeMaximo) 
-        {
-            FinalizarPorVictoria();
-        }
     }
 
-    private void UpdateTimerText() 
+    private void UpdateTimerText()
     {
-        if (textoTemporizador != null) 
+        if (textoTemporizador != null)
         {
             int minutes = Mathf.FloorToInt(timer / 60f);
             int seconds = Mathf.FloorToInt(timer % 60f);
@@ -82,23 +74,24 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void FinalizarPorDerrota() 
+    private void FinalizarPorDerrota()
     {
         juegoTerminado = true;
-        if (uiManager != null) 
+        if (uiManager != null)
         {
             uiManager.MostrarPantallaGameOver();
         }
-        Time.timeScale = 0; 
+        Time.timeScale = 0; // Congela el juego por completo
     }
 
-    public void FinalizarPorVictoria() 
+    // Método público para que InteractiveArea declare la victoria
+    public void FinalizarPorVictoria()
     {
         juegoTerminado = true;
-        if (uiManager != null) 
+        if (uiManager != null)
         {
             uiManager.MostrarPantallaWin();
         }
-        Time.timeScale = 0; 
+        Time.timeScale = 0; // Congela el juego por completo
     }
 }
