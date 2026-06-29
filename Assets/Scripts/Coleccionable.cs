@@ -24,7 +24,7 @@ public class Coleccionable : MonoBehaviour
 
             if (GameManager.instancia != null) 
             {
-                // Envía el punto al GameManager
+                
                 GameManager.instancia.UpdateScore(contadorObjetos); 
             }
             
